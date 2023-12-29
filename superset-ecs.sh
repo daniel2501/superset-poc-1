@@ -8,7 +8,8 @@ source ~/.zshrc
 export AWS_ACCESS_KEY_ID=*********************
 export AWS_SECRET_ACCESS_KEY=*********************************
 export AWS_DEFAULT_REGION=us-east-1
-# Create ECR repository
+aws ecr create-repository \
+    --repository-name superset-poc-1
 aws ecr get-login-password
 aws ecr | docker login -u AWS -p $(aws ecr get-login-password) \
     128862924679.dkr.ecr.us-east-1.amazonaws.com/superset-poc-1
