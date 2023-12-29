@@ -4,6 +4,14 @@ docker pull apache/superset
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
+ar x session-manager-plugin.deb
+tar xfvz data.tar.gz
+cp usr/local/sessionmanagerplugin/bin/session-manager-plugin ~/bin
+rm *.gz
+rm -rf etc lib usr
+rm session-manager-plugin.deb
+rm debian-binary
 source ~/.zshrc
 export AWS_ACCESS_KEY_ID=*********************
 export AWS_SECRET_ACCESS_KEY=*********************************
