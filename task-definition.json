@@ -1,0 +1,47 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "superset-ci",
+            "image": "128862924679.dkr.ecr.us-east-1.amazonaws.com/superset-poc-1:latest",
+            "links": [],
+            "portMappings": [
+                {
+                    "containerPort": 8080
+                }
+            ],
+            "essential": true,
+            "entryPoint": [],
+            "command": [],
+            "environment": [
+                {
+                    "name": "SUPERSET_LOAD_EXAMPLES",
+                    "value": "yes"
+                },
+                {
+                    "name": "SUPERSET_PORT",
+                    "value": "8080"
+                },
+                {
+                    "name": "SUPERSET_SECRET_KEY",
+                    "value": "io75aEm/DjIJE0MweeZnCHx9XitSmyiIKNejapBmxKHdcL7a2/JZpe/LF5LfgXhN"
+                },
+                {
+                    "name": "TALISMAN_ENABLED",
+                    "value": "False"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": []
+        }
+    ],
+    "family": "superset-ci",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "8192",
+    "taskRoleArn": "ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "executionRoleArn": "ecsTaskExecutionRole",
+    "volumes": []
+}
