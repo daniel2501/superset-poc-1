@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
+# Pull the official docker image
 docker pull apache/superset
+# Install AWS CLI and Session Manager plugin
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
@@ -13,6 +15,12 @@ rm -rf etc lib usr
 rm session-manager-plugin.deb
 rm debian-binary
 source ~/.zshrc
+# Install ECR CLI
+sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+sudo chmod +x /usr/local/bin/ecs-cli
+echo $PATH | grep /usr/local/bin
+ecs-cli --version
+# Set AWS credentials
 export AWS_ACCESS_KEY_ID=*********************
 export AWS_SECRET_ACCESS_KEY=*********************************
 export AWS_DEFAULT_REGION=us-east-1
