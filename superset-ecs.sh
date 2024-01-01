@@ -24,9 +24,14 @@ ecs-cli --version
 export AWS_ACCESS_KEY_ID=*********************
 export AWS_SECRET_ACCESS_KEY=*********************************
 export AWS_DEFAULT_REGION=us-east-1
+# Clone the docker image from the official repo
+git clone https://github.com/apache/superset.git
+cd superset
+sed -i 's/*superset-image/128862924679.dkr.ecr.us-east-1.amazonaws.com\/superset-poc-1:latest/g' docker-compose-non-dev.yml
+
+
 aws ecr create-repository \
     --repository-name superset-poc-1
-aws ecr get-login-password
 aws ecr | docker login -u AWS -p $(aws ecr get-login-password) \
     128862924679.dkr.ecr.us-east-1.amazonaws.com/superset-poc-1
 aws ecs register-task-definition \
