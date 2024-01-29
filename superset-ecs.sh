@@ -27,24 +27,20 @@ export AWS_DEFAULT_REGION=us-east-1
 # Clone the docker image from the official repo
 git clone https://github.com/apache/superset.git
 cd superset
+# Replace image name with our ECR image
 sed -i 's/*superset-image/128862924679.dkr.ecr.us-east-1.amazonaws.com\/superset-poc-1:latest/g' docker-compose-non-dev.yml
-
-
-aws ecr create-repository \
-    --repository-name superset-poc-1
-aws ecr | docker login -u AWS -p $(aws ecr get-login-password) \
-    128862924679.dkr.ecr.us-east-1.amazonaws.com/superset-poc-1
-aws ecs register-task-definition \
-    --cli-input-json file://$HOME/repos/superset-oc-1/task-definition.json
-aws ecs create-service --cluster superset-poc-cluster-1 \
-    --service-name superset-poc-service-1 \
-    --task-definition superset-ci:6 --desired-count 1 \
-    --launch-type "FARGATE" \
-    --network-configuration "awsvpcConfiguration={subnets=[subnet-0dd76b52],securityGroups=[sg-39833e09], assignPublicIp=ENABLED}" \
-    --enable-execute-command
-aws iam create-role --role-name ecsTaskExecutionRole \
-    --assume-role-policy-document file://ecs-tasks-trust-policy.json
-aws ecs run-task --cluster arn:aws:ecs:us-east-1:128862924679:cluster/superset-poc-cluster-1 \
-    --task-definition arn:aws:ecs:us-east-1:128862924679:task-definition/superset-ci:7 \
-    --launch-type FARGATE --count 1 \
-    --network-configuration "awsvpcConfiguration={subnets=[subnet-0dd76b52],securityGroups=[sg-39833e09], assignPublicIp=ENABLED}"
+# Create a key pair
+aws ec2 create-key-pair --key-name superset-poc-kp | jq -r '[."KeyMaterial",."KeyName"]|join("\t")' | xargs -d "\t" sh -c 'echo "$0" > $HOME/.ssh/$(echo -n "$1").pem;';
+# Provision EC2 instance to host containers
+ecs-cli up --cluster superset-poc-cluster-1 \
+           --keypair superset-poc-kp \
+           --capability-iam \
+           --instance-type m5.xlarge \
+           --port 8080 \
+           --port 8088 \
+           --launch-type EC2
+# Create ECS task definition
+ecs-cli compose -f $HOME/repos/superset/docker-compose-non-dev.yml create
+# --cluster superset-poc-cluster-1
+# Start the task
+ecs-cli compose -f $HOME/repos/superset/docker-compose-non-dev.yml start
